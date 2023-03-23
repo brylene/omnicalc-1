@@ -17,4 +17,9 @@ class ApplicationController < ActionController::Base
 
     render({ :template => "calculation_templates/rand_results.html.erb" })
   end
+
+  def blank_rand_form
+  
+    render({ :template => "calculation_templates/rand_form.html.erb"})
+end
 end
