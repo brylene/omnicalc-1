@@ -39,8 +39,18 @@ class ApplicationController < ActionController::Base
   def calculate_payment
     @apr = params.fetch("user_apr").to_f
     @years = params.fetch("user_years").to_i
-    @principal = params.fetch("user_pv").to_f
-    @payment = ((@apr / @years) * @principal)
+    @principal= params.fetch("user_pv").to_f
+    # The number of periods, n, that we receive from the user is in years. 
+    # Since we're calculating monthly payment we multiply it by 12.
+    @n = @years * 12 
+    @percentage = @apr/100
+    # r in the formula is a percentage per period. 
+    # One period is equal to one month. The apr we receive from the user is yearly.
+    @r = @percentage/12
+    @numerator = @r*(1 + @r)**@n
+    @denominator = ((1 + @r)**(@n)-1)
+    @payment = @principal*(@numerator / @denominator)
+    @payment = @payment.to_s(:currency)
 
     render({ :template => "calculation_templates/payment_results.html.erb" })
   end
